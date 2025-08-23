@@ -8,6 +8,7 @@ import 'views/auth_wrapper.dart';
 import 'controllers/event_controller.dart';
 import 'controllers/party_finance_controller.dart';
 import 'controllers/auth_controller.dart';
+import 'controllers/announcement_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +34,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<PartyFinanceController>(
           create: (context) => PartyFinanceController(),
+        ),
+        ChangeNotifierProvider<AnnouncementController>(
+          create: (context) => AnnouncementController(),
         ),
       ],
       child: MaterialApp(

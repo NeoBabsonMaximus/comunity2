@@ -45,6 +45,17 @@ class AuthController extends ChangeNotifier {
     try {
       final appUser = await AuthService.getCurrentAppUser();
       if (appUser != null) {
+        // Verificar si el usuario está activo (no bloqueado)
+        if (!appUser.isActive) {
+          // Usuario bloqueado, cerrar sesión
+          await AuthService.signOut();
+          _currentUser = null;
+          _status = AuthStatus.unauthenticated;
+          _errorMessage = 'Tu cuenta ha sido bloqueada. Contacta al administrador.';
+          notifyListeners();
+          return;
+        }
+        
         _currentUser = appUser;
         _status = AuthStatus.authenticated;
         _errorMessage = null;
@@ -209,6 +220,45 @@ class AuthController extends ChangeNotifier {
       _errorMessage = 'Error obteniendo usuarios: $e';
       notifyListeners();
       return [];
+    }
+  }
+
+  // Bloquear usuario
+  Future<bool> blockUser(String userId) async {
+    try {
+      await AuthService.updateUserStatus(userId, false);
+      return true;
+    } on AuthException catch (e) {
+      _errorMessage = e.message;
+      notifyListeners();
+      return false;
+    } catch (e) {
+      _errorMessage = 'Error bloqueando usuario: $e';
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // Desbloquear usuario
+  Future<bool> unblockUser(String userId) async {
+    try {
+      await AuthService.updateUserStatus(userId, true);
+      return true;
+    } on AuthException catch (e) {
+      _errorMessage = e.message;
+      notifyListeners();
+      return false;
+    } catch (e) {
+      _errorMessage = 'Error desbloqueando usuario: $e';
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // Método para refrescar datos del usuario actual
+  Future<void> refreshCurrentUser() async {
+    if (_currentUser != null) {
+      await _loadUserData();
     }
   }
 

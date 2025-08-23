@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'home_view.dart';
 import 'favorites_view.dart';
 import 'parties_view.dart';
+import 'announcements_view.dart';
 import 'profile_view.dart';
 
 class MainNavigationView extends StatefulWidget {
@@ -18,6 +19,7 @@ class _MainNavigationViewState extends State<MainNavigationView> {
     const HomeView(),
     const FavoritesView(),
     const PartiesView(),
+    const AnnouncementsView(),
     const ProfileView(),
   ];
 
@@ -74,6 +76,11 @@ class _MainNavigationViewState extends State<MainNavigationView> {
               icon: Icon(Icons.celebration_outlined),
               activeIcon: Icon(Icons.celebration),
               label: 'Fiestas',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.campaign_outlined),
+              activeIcon: Icon(Icons.campaign),
+              label: 'Anuncios',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_outlined),

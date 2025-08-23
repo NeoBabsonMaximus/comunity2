@@ -26,46 +26,6 @@ class _HomeViewState extends State<HomeView> {
     }).toList();
   }
 
-  void _addSampleEvents(EventController eventController) {
-    final sampleEvents = [
-      Event(
-        id: '',
-        title: '🎉 Festival de Primavera',
-        description: 'Celebración anual con música, comida y actividades familiares.',
-        date: DateTime.now().add(const Duration(days: 2)),
-        location: 'Parque Central',
-        organizer: 'Comité Cultural',
-      ),
-      Event(
-        id: '',
-        title: '📚 Taller de Reciclaje',
-        description: 'Aprende técnicas de reciclaje para cuidar el medio ambiente.',
-        date: DateTime.now().add(const Duration(days: 1)),
-        location: 'Centro Comunitario',
-        organizer: 'Grupo Ecológico',
-      ),
-      Event(
-        id: '',
-        title: '🧘 Yoga Comunitario',
-        description: 'Sesión de yoga gratuita para todos los niveles.',
-        date: DateTime.now(),
-        location: 'Jardín Comunal',
-        organizer: 'Elena Martínez',
-      ),
-    ];
-    
-    for (final event in sampleEvents) {
-      eventController.createEvent(event);
-    }
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('¡Eventos de ejemplo agregados!'),
-        backgroundColor: Colors.orange,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final eventController = Provider.of<EventController>(context);
@@ -290,30 +250,23 @@ class _HomeViewState extends State<HomeView> {
       ),
       floatingActionButton: Consumer<AuthController>(
         builder: (context, authController, child) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              FloatingActionButton(
-                heroTag: "sample_data",
-                onPressed: () => _addSampleEvents(eventController),
-                backgroundColor: Colors.orange,
-                child: const Icon(Icons.add_box),
-              ),
-              const SizedBox(height: 8),
-              if (authController.currentUser?.canCreateEvents == true)
-                FloatingActionButton(
-                  heroTag: "add_event",
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CreateEditEventView(),
-                      ),
-                    );
-                  },
-                  child: const Icon(Icons.add),
+          // Solo mostrar el botón si el usuario es administrador
+          if (authController.currentUser?.isAdmin != true) {
+            return const SizedBox.shrink();
+          }
+          
+          return FloatingActionButton(
+            heroTag: "add_event",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CreateEditEventView(),
                 ),
-            ],
+              );
+            },
+            backgroundColor: Colors.green,
+            child: const Icon(Icons.add, color: Colors.white),
           );
         },
       ),

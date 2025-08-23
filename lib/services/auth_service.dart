@@ -167,6 +167,13 @@ class AuthService {
         return newAppUser;
       }
 
+      // Verificar si el usuario está activo (no bloqueado)
+      if (!appUser.isActive) {
+        // Cerrar la sesión inmediatamente
+        await _auth.signOut();
+        throw AuthException('Tu cuenta ha sido bloqueada. Contacta al administrador.', 'account-blocked');
+      }
+
       // Actualizar último login
       await _firestore.collection('users').doc(user.uid).update({
         'lastLogin': Timestamp.fromDate(DateTime.now()),
@@ -246,6 +253,27 @@ class AuthService {
     } catch (e) {
       if (e is AuthException) rethrow;
       throw AuthException('Error obteniendo usuarios: $e', 'fetch-users-failed');
+    }
+  }
+
+  // Actualizar estado del usuario (bloquear/desbloquear)
+  static Future<void> updateUserStatus(String userId, bool isActive) async {
+    try {
+      final currentUser = await getCurrentAppUser();
+      if (currentUser == null || !currentUser.canManageUsers) {
+        throw AuthException('No tienes permisos para gestionar usuarios', 'insufficient-permissions');
+      }
+
+      if (userId == currentUser.uid) {
+        throw AuthException('No puedes bloquear tu propia cuenta', 'self-block-forbidden');
+      }
+
+      await _firestore.collection('users').doc(userId).update({
+        'isActive': isActive,
+      });
+    } catch (e) {
+      if (e is AuthException) rethrow;
+      throw AuthException('Error actualizando estado de usuario: $e', 'update-status-failed');
     }
   }
 

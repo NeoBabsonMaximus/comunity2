@@ -8,9 +8,9 @@ class AddTransactionView extends StatefulWidget {
   final String partyId;
 
   const AddTransactionView({
-    Key? key,
+    super.key,
     required this.partyId,
-  }) : super(key: key);
+  });
 
   @override
   State<AddTransactionView> createState() => _AddTransactionViewState();

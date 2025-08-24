@@ -51,7 +51,7 @@ class _MainNavigationViewState extends State<MainNavigationView> {
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.white,
           selectedItemColor: Theme.of(context).primaryColor,
-          unselectedItemColor: Colors.grey.shade600,
+          unselectedItemColor: Colors.black87, // Cambiado de grey.shade600 a black87 para mejor contraste
           selectedLabelStyle: const TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 12,

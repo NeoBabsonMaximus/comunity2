@@ -263,16 +263,34 @@ class _UserManagementViewState extends State<UserManagementView> {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: const Text('Gestión de Usuarios'),
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
+        backgroundColor: const Color(0xFF1877F2), // Azul Facebook más fuerte
         elevation: 0,
+        title: const Text(
+          'COMUNIDAD',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.0,
+          ),
+        ),
         actions: [
-          IconButton(
-            onPressed: _showInfoDialog,
-            icon: const Icon(Icons.info_outline),
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            decoration: const BoxDecoration(
+              color: Colors.white24,
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              onPressed: _showInfoDialog,
+              icon: const Icon(
+                Icons.info_outline,
+                color: Colors.white,
+              ),
+            ),
           ),
         ],
+        centerTitle: false,
       ),
       body: Column(
         children: [

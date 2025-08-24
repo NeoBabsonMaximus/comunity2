@@ -18,6 +18,12 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   DateTime _selectedDate = DateTime.now();
 
+  @override
+  void initState() {
+    super.initState();
+    _selectedDate = DateTime.now(); // Se asegura que siempre sea HOY
+  }
+
   List<Event> _filterEventsByDate(List<Event> events) {
     return events.where((event) {
       return event.date.year == _selectedDate.year &&
@@ -32,8 +38,42 @@ class _HomeViewState extends State<HomeView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Eventos Comunitarios'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: const Color(0xFF1877F2), // Azul Facebook más fuerte
+        elevation: 0,
+        title: const Text(
+          'COMUNIDAD',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.0,
+          ),
+        ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            decoration: const BoxDecoration(
+              color: Colors.white24,
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CreateEditEventView(),
+                  ),
+                );
+              },
+              icon: const Icon(
+                Icons.add,
+                color: Colors.white,
+                size: 24,
+              ),
+            ),
+          ),
+        ],
+        centerTitle: false,
       ),
       body: StreamBuilder<List<Event>>(
         stream: eventController.getEvents(),

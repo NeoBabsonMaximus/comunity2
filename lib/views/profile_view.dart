@@ -10,32 +10,63 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mi Perfil'),
+        backgroundColor: const Color(0xFF1877F2), // Azul Facebook más fuerte
+        elevation: 0,
+        title: const Text(
+          'COMUNIDAD',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.0,
+          ),
+        ),
         actions: [
           Consumer<AuthController>(
             builder: (context, authController, child) {
               if (authController.canManageUsers) {
-                return IconButton(
-                  icon: const Icon(Icons.admin_panel_settings),
-                  tooltip: 'Gestión de Usuarios',
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const UserManagementView(),
-                      ),
-                    );
-                  },
+                return Container(
+                  margin: const EdgeInsets.only(right: 8),
+                  decoration: const BoxDecoration(
+                    color: Colors.white24,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.admin_panel_settings,
+                      color: Colors.white,
+                    ),
+                    tooltip: 'Gestión de Usuarios',
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const UserManagementView(),
+                        ),
+                      );
+                    },
+                  ),
                 );
               }
               return const SizedBox.shrink();
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Cerrar Sesión',
-            onPressed: () => _showLogoutDialog(context),
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            decoration: const BoxDecoration(
+              color: Colors.white24,
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.logout,
+                color: Colors.white,
+              ),
+              tooltip: 'Cerrar Sesión',
+              onPressed: () => _showLogoutDialog(context),
+            ),
           ),
         ],
+        centerTitle: false,
       ),
       body: Consumer<AuthController>(
         builder: (context, authController, child) {

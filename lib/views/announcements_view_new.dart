@@ -24,7 +24,7 @@ class _AnnouncementsViewState extends State<AnnouncementsView>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 6, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     print('🔥 VIEW DEBUG: AnnouncementsView inicializada');
   }
 
@@ -34,58 +34,60 @@ class _AnnouncementsViewState extends State<AnnouncementsView>
     super.dispose();
   }
 
+  void _addSampleAnnouncements(AnnouncementController controller) async {
+    try {
+      await controller.createTestAnnouncements();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('¡Anuncios de ejemplo agregados!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final announcementController = Provider.of<AnnouncementController>(context);
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1877F2), // Azul Facebook más fuerte
-        elevation: 0,
-        title: const Text(
-          'COMUNIDAD',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.0,
-          ),
-        ),
+        title: const Text('Muro de Anuncios'),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           // Botón Admin solo para administradores
           Consumer<AuthController>(
             builder: (context, authController, child) {
-              // Debug info
-              if (kDebugMode) {
-                print('🔐 AUTH DEBUG: Usuario actual: ${authController.currentUser?.email}');
-                print('🔐 AUTH DEBUG: Rol: ${authController.currentUser?.role}');
-                print('🔐 AUTH DEBUG: Es admin: ${authController.isAdmin}');
-              }
+              final userEmail = authController.currentUser?.email ?? '';
+              final userName = authController.currentUser?.displayName ?? '';
+              final isAdmin = userEmail == 'admin@comunity.com' || 
+                             userEmail.contains('@admin.') ||
+                             userName.toLowerCase().contains('admin');
               
-              // Lógica de admin: usar rol oficial O fallback por email
-              final isOfficialAdmin = authController.isAdmin;
-              final email = authController.currentUser?.email ?? '';
-              final isFallbackAdmin = email == 'admin@comunity.com' || 
-                                    email.contains('admin@') ||
-                                    email.contains('@admin.');
-              
-              final canAccessAdmin = isOfficialAdmin || isFallbackAdmin;
-              
-              if (!canAccessAdmin) return const SizedBox.shrink();
+              if (!isAdmin) return const SizedBox.shrink();
               
               return Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AnnouncementModerationView(),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.pending_actions, size: 18),
-                  label: const Text('REVISAR'),
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AnnouncementModerationView(),
+                    ),
+                  ),
+                  icon: const Icon(Icons.admin_panel_settings, size: 18),
+                  label: const Text('ADMIN'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
@@ -99,9 +101,6 @@ class _AnnouncementsViewState extends State<AnnouncementsView>
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
-          indicatorColor: Colors.white,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
           onTap: (index) {
             setState(() {
               switch (index) {
@@ -118,9 +117,6 @@ class _AnnouncementsViewState extends State<AnnouncementsView>
                   _selectedType = AnnouncementType.service;
                   break;
                 case 4:
-                  _selectedType = AnnouncementType.general;
-                  break;
-                case 5:
                   _selectedType = AnnouncementType.community;
                   break;
               }
@@ -131,7 +127,6 @@ class _AnnouncementsViewState extends State<AnnouncementsView>
             Tab(text: 'Se Vende', icon: Icon(Icons.sell)),
             Tab(text: 'Se Busca', icon: Icon(Icons.search)),
             Tab(text: 'Servicios', icon: Icon(Icons.build)),
-            Tab(text: 'General', icon: Icon(Icons.announcement)),
             Tab(text: 'Comunidad', icon: Icon(Icons.people)),
           ],
         ),
@@ -305,17 +300,30 @@ class _AnnouncementsViewState extends State<AnnouncementsView>
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: "add_announcement",
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const CreateAnnouncementView(),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (kDebugMode)
+            FloatingActionButton(
+              heroTag: "sample_data",
+              onPressed: () => _addSampleAnnouncements(announcementController),
+              backgroundColor: Colors.orange,
+              child: const Icon(Icons.add_box),
             ),
-          );
-        },
-        child: const Icon(Icons.add),
+          const SizedBox(height: 8),
+          FloatingActionButton(
+            heroTag: "add_announcement",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CreateAnnouncementView(),
+                ),
+              );
+            },
+            child: const Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }
@@ -328,8 +336,6 @@ class _AnnouncementsViewState extends State<AnnouncementsView>
         return Colors.blue;
       case AnnouncementType.service:
         return Colors.orange;
-      case AnnouncementType.general:
-        return Colors.grey;
       case AnnouncementType.community:
         return Colors.purple;
     }
@@ -343,8 +349,6 @@ class _AnnouncementsViewState extends State<AnnouncementsView>
         return 'SE BUSCA';
       case AnnouncementType.service:
         return 'SERVICIO';
-      case AnnouncementType.general:
-        return 'GENERAL';
       case AnnouncementType.community:
         return 'COMUNIDAD';
     }

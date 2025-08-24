@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">990361566789-web-client-id</string>
+    <string name="gcm_defaultSenderId" translatable="false">990361566789</string>
+    <string name="google_api_key" translatable="false">AIzaSyAC13LdlwFFF_xU0QIEJbF8Qni6X0euUaM</string>
+    <string name="google_app_id" translatable="false">1:990361566789:ios:6e6cd3c1a45aa95016ed2c</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAC13LdlwFFF_xU0QIEJbF8Qni6X0euUaM</string>
+    <string name="google_storage_bucket" translatable="false">comunity-74ad2.firebasestorage.app</string>
+    <string name="project_id" translatable="false">comunity-74ad2</string>
+</resources>
